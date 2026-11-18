@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFD100">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="토익단어">
+<title>토익단어</title>
+<style>
+:root{
+  --yellow:#FFD100; --yellow-soft:#FFF4B8; --purple:#5B2A86; --purple-dark:#43205F;
+  --ink:#1B1B1B; --sub:#6B6B6B; --line:#E6E1D3; --paper:#FFFDF6;
+  --blue:#2F6FC4; --red:#E2492F; --green:#2E9B5F; --amber:#E79A16;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--yellow);color:var(--ink);
+  font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.hidden{display:none!important}
+
+/* ---------- 홈 ---------- */
+.cover{padding:28px 22px 18px;position:relative}
+.cover h1{margin:0;font-size:52px;line-height:1.02;font-weight:900;letter-spacing:-2px}
+.cover .band{display:inline-block;margin-top:12px;background:var(--purple);color:#fff;
+  font-size:34px;font-weight:900;padding:6px 18px 8px;border-radius:4px;letter-spacing:-1px}
+.cover .tag{position:absolute;right:22px;top:30px;background:#fff;border:3px solid var(--ink);
+  border-radius:50%;width:78px;height:78px;display:flex;align-items:center;justify-content:center;
+  text-align:center;font-size:13px;font-weight:800;line-height:1.2;transform:rotate(8deg)}
+.cover .bubble{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:18px;
+  padding:8px 14px;display:inline-block;font-weight:700;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:6px 18px 4px}
+.stat{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:900}
+.stat span{font-size:12px;color:var(--sub);font-weight:700}
+.bigbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 18px}
+.big{background:var(--purple);color:#fff;border-radius:12px;padding:14px 10px;font-weight:800;font-size:16px;
+  box-shadow:0 3px 0 var(--purple-dark)}
+.big.alt{background:#fff;color:var(--ink);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+.big small{display:block;font-weight:600;font-size:12px;opacity:.85;margin-top:2px}
+.sheet{background:var(--paper);border-radius:22px 22px 0 0;margin-top:8px;padding:18px 16px 40px;flex:1}
+.sheet h2{margin:2px 4px 12px;font-size:18px;font-weight:900}
+.days{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.day{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:9px 2px 7px;text-align:center;position:relative}
+.day .dn{font-size:11px;color:var(--sub);font-weight:700}
+.day .dd{font-size:20px;font-weight:900;line-height:1.1}
+.day .bar{height:4px;background:var(--line);border-radius:3px;margin:6px 8px 0;overflow:hidden}
+.day .bar i{display:block;height:100%;background:var(--purple)}
+.day.done{background:var(--yellow-soft);border-color:var(--yellow)}
+.day.done::after{content:"✓";position:absolute;right:5px;top:3px;font-size:11px;color:var(--purple);font-weight:900}
+.links{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.links button{font-size:13px;color:var(--sub);font-weight:700;padding:6px 10px;border:1px solid var(--line);border-radius:20px;background:#fff}
+
+/* ---------- 학습 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 14px 10px}
+.topbar .back{width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--ink);font-size:18px;font-weight:900}
+.topbar .ttl{flex:1;font-weight:900;font-size:18px}
+.topbar .ttl small{display:block;font-size:12px;color:var(--purple);font-weight:800}
+.prog{height:8px;background:rgba(0,0,0,.12);border-radius:5px;margin:0 16px 12px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--purple);transition:width .25s}
+.card{background:var(--paper);margin:0 12px;border-radius:18px;padding:20px 18px 18px;min-height:56vh;
+  box-shadow:0 6px 0 rgba(0,0,0,.12);display:flex;flex-direction:column}
+.whead{display:flex;align-items:flex-start;gap:10px}
+.wnum{font-size:15px;font-weight:900;color:var(--red);margin-top:6px;min-width:22px}
+.word{font-size:36px;font-weight:900;letter-spacing:-.5px;line-height:1.1;word-break:break-word}
+.word.kor{font-size:24px;letter-spacing:0;line-height:1.35}
+.ipa{color:var(--sub);font-size:15px;margin:6px 0 0 32px}
+.spk{margin-left:auto;flex:none;width:44px;height:44px;border-radius:50%;background:var(--yellow);border:2px solid var(--ink);font-size:20px}
+.stage{margin:8px 0 0 32px;font-size:12px;color:var(--sub);font-weight:700}
+.reveal{margin-top:auto;padding-top:24px}
+.tapbtn{width:100%;padding:16px;border-radius:14px;border:2px dashed #C9C2AE;color:var(--sub);font-weight:800;font-size:16px;background:#fff}
+.answer{border-top:2px solid var(--line);margin-top:16px;padding-top:14px}
+.mean{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:18px;font-weight:800;line-height:1.45}
+.pos{display:inline-block;background:var(--blue);color:#fff;font-size:12px;font-weight:800;border-radius:4px;padding:1px 6px;margin-right:2px}
+.ex{margin-top:14px;padding-left:10px;border-left:3px solid var(--yellow)}
+.ex p{margin:0}
+.ex .en{font-weight:700;font-size:15.5px;line-height:1.45}
+.ex .en b{background:linear-gradient(transparent 60%,var(--yellow-soft) 60%)}
+.ex .ko{font-size:13.5px;color:var(--sub);margin-top:3px;line-height:1.45}
+.fullplay{margin-top:14px;font-size:13px;font-weight:800;color:var(--purple);border:1.5px solid var(--purple);border-radius:20px;padding:7px 14px;background:#fff}
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 12px 24px}
+.grade button{border-radius:14px;padding:14px 4px;font-weight:900;font-size:16px;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.grade small{display:block;font-size:11px;font-weight:700;opacity:.9;margin-top:2px}
+.g0{background:var(--red)} .g1{background:var(--amber)} .g2{background:var(--green)}
+.done-box{background:var(--paper);margin:20px 14px;border-radius:18px;padding:28px 20px;text-align:center}
+.done-box h3{font-size:24px;margin:6px 0 8px;font-weight:900}
+.done-box p{color:var(--sub);margin:0 0 18px}
+
+/* ---------- 목록·설정 ---------- */
+.list{background:var(--paper);margin:0 12px 30px;border-radius:18px;padding:6px 14px}
+.row{display:flex;align-items:center;gap:10px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .w{font-weight:900;font-size:17px;min-width:120px}
+.row .m{font-size:13px;color:var(--sub);flex:1;line-height:1.35}
+.row .s{font-size:11px;font-weight:800;color:#fff;background:var(--purple);border-radius:10px;padding:2px 7px}
+.row .s.miss{background:var(--red)}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:14px 2px;border-bottom:1px solid var(--line);font-weight:700}
+.opt:last-child{border-bottom:0}
+.seg{display:flex;border:2px solid var(--ink);border-radius:10px;overflow:hidden}
+.seg button{padding:6px 10px;font-size:13px;font-weight:800}
+.seg button.on{background:var(--purple);color:#fff}
+.note{font-size:12px;color:var(--sub);font-weight:500;margin-top:3px}
+.small-btn{border:2px solid var(--ink);border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px;background:#fff}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:10px 16px;border-radius:20px;font-size:14px;font-weight:700;opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1}
+.setup{padding:30px 22px}
+.setup .panel{background:var(--paper);border-radius:18px;padding:20px;margin-top:18px;line-height:1.6;font-size:14.5px}
+.setup ol{padding-left:20px;margin:8px 0}
+.pbar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:14px}
+.pbar i{display:block;height:100%;width:0;background:var(--purple);transition:width .2s}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- 처음 설정 -->
+<section id="setup" class="hidden setup">
+  <div class="cover" style="padding:0">
+    <h1>토익<br>기출 단어</h1>
+    <div class="band">처음 설정</div>
+  </div>
+  <div class="panel">
+    <b>단어 데이터 파일을 한 번만 넣어 주세요.</b>
+    <ol>
+      <li>PC에서 만든 <b>toeic-data.zip</b> 파일을 폰으로 옮겨요. (카카오톡 나에게 보내기, 구글 드라이브, 아이클라우드 등)</li>
+      <li>아래 버튼을 눌러 그 파일을 고르면 끝이에요.</li>
+    </ol>
+    <span style="color:var(--sub);font-size:13px">한 번 넣으면 폰 안에 저장돼서 인터넷 없이도 쓸 수 있어요.</span>
+    <button class="big" id="btnPick" style="width:100%;margin-top:14px">데이터 파일 고르기</button>
+    <input type="file" id="fileData" accept=".zip,application/zip" class="hidden">
+    <div class="pbar hidden" id="pbar"><i id="pfill"></i></div>
+    <div id="pmsg" style="margin-top:8px;font-size:13px;color:var(--sub)"></div>
+  </div>
+</section>
+
+<!-- 홈 -->
+<section id="home" class="hidden">
+  <div class="cover">
+    <h1>토익<br>기출 단어</h1>
+    <div class="band">30일 완성</div>
+    <div class="tag">망각곡선<br>반복학습</div>
+    <div><span class="bubble" id="greet">오늘도 한 Day씩!</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="stDue">0</b><span>오늘 복습</span></div>
+    <div class="stat"><b id="stLearn">0</b><span>학습 중</span></div>
+    <div class="stat"><b id="stDone">0</b><span>암기 완료</span></div>
+  </div>
+  <div class="bigbtns">
+    <button class="big" id="btnReview">오늘 복습하기<small id="dueSmall">복습할 단어 0개</small></button>
+    <button class="big alt" id="btnNext">이어서 새 단어<small id="nextSmall">Day 1</small></button>
+  </div>
+  <div class="sheet">
+    <h2>Day 선택 <span style="font-size:13px;color:var(--sub);font-weight:700">· 원하는 Day부터 바로 학습할 수 있어요</span></h2>
+    <div class="days" id="days"></div>
+    <div class="links">
+      <button id="btnWrong">오답 노트</button>
+      <button id="btnSettings">설정 · 백업</button>
+    </div>
+  </div>
+</section>
+
+<!-- 학습 -->
+<section id="study" class="hidden">
+  <div class="topbar">
+    <button class="back" data-home>‹</button>
+    <div class="ttl"><small id="sMode">Day 1</small><span id="sCount">1 / 40</span></div>
+  </div>
+  <div class="prog"><i id="sProg"></i></div>
+  <div id="cardWrap">
+    <div class="card">
+      <div class="whead">
+        <span class="wnum" id="cNum"></span>
+        <div class="word" id="cWord"></div>
+        <button class="spk" id="cSpk" title="발음 듣기">🔊</button>
+      </div>
+      <div class="ipa" id="cIpa"></div>
+      <div class="stage" id="cStage"></div>
+      <div class="reveal">
+        <button class="tapbtn" id="cShow">눌러서 뜻 보기</button>
+        <div class="answer hidden" id="cAns">
+          <div class="mean" id="cMean"></div>
+          <div id="cEx"></div>
+          <button class="fullplay" id="cFull">▶ 단어·뜻·예문 원어민 음성</button>
+        </div>
+      </div>
+    </div>
+    <div class="grade hidden" id="cGrade">
+      <button class="g0" data-g="0">몰라요<small>처음부터</small></button>
+      <button class="g1" data-g="1">애매해요<small>내일 다시</small></button>
+      <button class="g2" data-g="2">알아요<small id="nextGap">다음 단계</small></button>
+    </div>
+  </div>
+  <div class="done-box hidden" id="doneBox">
+    <div style="font-size:44px">🎉</div>
+    <h3 id="doneTitle">학습 완료!</h3>
+    <p id="doneText"></p>
+    <button class="big" data-home style="width:100%">홈으로</button>
+  </div>
+</section>
+
+<!-- 오답 노트 / 목록 -->
+<section id="listView" class="hidden">
+  <div class="topbar">
+    <button class="back" data-home>‹</button>
+    <div class="ttl"><small id="lSub">자주 틀린 단어</small><span id="lTitle">오답 노트</span></div>
+    <button class="small-btn" id="lStudy">학습</button>
+  </div>
+  <div id="dayBtns" class="bigbtns hidden" style="padding-top:0">
+    <button class="big" id="dNew">이 Day 학습하기<small id="dNewSmall"></small></button>
+    <button class="big alt" id="dAll">전체 다시 보기<small id="dAllSmall"></small></button>
+  </div>
+  <div class="list" id="lBody"></div>
+</section>
+
+<!-- 설정 -->
+<section id="settings" class="hidden">
+  <div class="topbar">
+    <button class="back" data-home>‹</button>
+    <div class="ttl"><small>나에게 맞게</small><span>설정 · 백업</span></div>
+  </div>
+  <div class="list">
+    <div class="opt"><div>카드 앞면<div class="note">무엇을 보고 떠올릴지</div></div>
+      <div class="seg" id="optDir"><button data-v="en">영어→뜻</button><button data-v="ko">뜻→영어</button></div></div>
+    <div class="opt"><div>카드가 나오면 발음 자동 재생</div>
+      <div class="seg" id="optAuto"><button data-v="1">켜기</button><button data-v="0">끄기</button></div></div>
+    <div class="opt"><div>하루 새 단어 수<div class="note">'이어서 새 단어'에서 한 번에 나오는 개수</div></div>
+      <div class="seg" id="optNew"><button data-v="20">20</button><button data-v="40">40</button><button data-v="60">60</button></div></div>
+    <div class="opt"><div>학습 기록 백업<div class="note">파일로 저장해 두면 폰을 바꿔도 이어서 할 수 있어요</div></div>
+      <button class="small-btn" id="btnExport">내보내기</button></div>
+    <div class="opt"><div>백업 불러오기</div>
+      <button class="small-btn" id="btnImport">불러오기</button><input type="file" id="fileImport" accept=".json" class="hidden"></div>
+    <div class="opt"><div>단어 데이터 다시 넣기<div class="note">데이터 파일이 바뀌었을 때만 사용해요</div></div>
+      <button class="small-btn" id="btnReData">다시 넣기</button></div>
+    <div class="opt"><div>학습 기록 초기화</div>
+      <button class="small-btn" id="btnReset" style="color:var(--red);border-color:var(--red)">초기화</button></div>
+  </div>
+  <div class="list" style="font-size:13px;color:var(--sub);line-height:1.6;padding:14px">
+    <b style="color:var(--ink)">복습 간격 (에빙하우스 망각 곡선)</b><br>
+    알아요를 누를 때마다 1일 → 3일 → 7일 → 15일 → 30일 뒤에 다시 나와요. 30일 단계까지 통과하면 '암기 완료'예요.
+    몰라요를 누르면 1단계로 돌아가고, 이번 학습 안에서 한 번 더 나와요.
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script src="jszip.min.js"></script>
+<script>
+/* ---------- 폰 저장소(IndexedDB) ---------- */
+const DB={db:null,
+  open(){return new Promise((ok,no)=>{const r=indexedDB.open('toeic30',1);
+    r.onupgradeneeded=()=>{const d=r.result; d.createObjectStore('kv'); d.createObjectStore('audio');};
+    r.onsuccess=()=>{DB.db=r.result;ok();}; r.onerror=()=>no(r.error);});},
+  get(store,key){return new Promise((ok,no)=>{const t=DB.db.transaction(store).objectStore(store).get(key);t.onsuccess=()=>ok(t.result);t.onerror=()=>no(t.error);});},
+  putMany(store,items){return new Promise((ok,no)=>{const tx=DB.db.transaction(store,'readwrite');const os=tx.objectStore(store);
+    for(const [k,v] of items) os.put(v,k); tx.oncomplete=ok; tx.onerror=()=>no(tx.error);});}
+};
+function showOnly(id){ for(const s of document.querySelectorAll('section')) s.classList.toggle('hidden', s.id!==id); }
+async function importZip(file){
+  const pm=document.getElementById('pmsg'), pb=document.getElementById('pbar'), pf=document.getElementById('pfill');
+  pb.classList.remove('hidden'); pm.textContent='파일을 여는 중...';
+  try{
+    if(navigator.storage&&navigator.storage.persist) navigator.storage.persist();
+    const zip=await JSZip.loadAsync(file);
+    const dj=zip.file('data.json'); if(!dj) throw new Error('data.json 없음');
+    const data=JSON.parse(await dj.async('string'));
+    const files=Object.values(zip.files).filter(f=>!f.dir&&f.name.startsWith('audio/'));
+    let batch=[];
+    for(let i=0;i<files.length;i++){
+      const f=files[i]; const name=f.name.slice(6).replace(/\.mp3$/,'');
+      const buf=await f.async('arraybuffer'); batch.push([name,new Blob([buf],{type:'audio/mpeg'})]);
+      if(batch.length>=100||i===files.length-1){ await DB.putMany('audio',batch); batch=[]; }
+      pf.style.width=Math.round((i+1)/files.length*100)+'%'; pm.textContent=`음성 저장 중... ${i+1} / ${files.length}`;
+    }
+    await DB.putMany('kv',[['data',data]]);
+    pm.textContent='완료! 잠시 후 시작해요.'; setTimeout(()=>location.reload(),600);
+  }catch(e){ pm.textContent='파일을 읽지 못했어요: '+e.message; }
+}
+document.getElementById('btnPick').onclick=()=>document.getElementById('fileData').click();
+document.getElementById('fileData').onchange=e=>{ if(e.target.files[0]) importZip(e.target.files[0]); };
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+DB.open().then(()=>DB.get('kv','data')).then(data=>{
+  if(!data||!data.length){ showOnly('setup'); return; }
+  window.VOCA=data; startApp();
+}).catch(()=>showOnly('setup'));
+
+function startApp(){
+const V = window.VOCA || [];
+const AUDIO = window.AUDIO || {};
+const INTERVALS = [1,3,7,15,30];            // 일 단위
+const KEY='toeic30-v1';
+const $=id=>document.getElementById(id);
+const DAY=86400000;
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d.getTime();};
+const id=v=>`${v.d}-${v.n}`;
+
+let S = load();
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.cards) return s; }catch(e){}
+  return {cards:{}, opt:{dir:'en',auto:'1',nw:'40'}};
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- 음성 ---------- */
+const player=new Audio();
+const urlCache={};
+function prep(name){ if(urlCache[name]) return Promise.resolve(urlCache[name]);
+  return DB.get('audio',name).then(b=>{ if(b){urlCache[name]=URL.createObjectURL(b);} return urlCache[name]; }); }
+function play(name){
+  const go=src=>{ if(!src){toast('음성 파일을 찾을 수 없어요');return;} player.pause(); player.src=src; player.currentTime=0; player.play().catch(()=>{}); };
+  if(urlCache[name]) go(urlCache[name]); else prep(name).then(go);
+}
+
+/* ---------- 상태 계산 ---------- */
+function cardState(v){ return S.cards[id(v)]; }
+function isDue(c){ return c && c.st<5 && c.due<=today(); }
+function counts(){
+  let due=0,learn=0,done=0;
+  for(const v of V){ const c=cardState(v); if(!c) continue;
+    if(c.st>=5) done++; else { learn++; if(isDue(c)) due++; } }
+  return {due,learn,done};
+}
+function dayWords(d){ return V.filter(v=>v.d===d); }
+function dayProgress(d){
+  const ws=dayWords(d); let seen=0, mastered=0;
+  for(const v of ws){ const c=cardState(v); if(c){ seen++; if(c.st>=2) mastered++; } }
+  return {total:ws.length, seen, mastered};
+}
+
+/* ---------- 홈 ---------- */
+function renderHome(){
+  const c=counts();
+  $('stDue').textContent=c.due; $('stLearn').textContent=c.learn; $('stDone').textContent=c.done;
+  $('dueSmall').textContent = c.due ? `복습할 단어 ${c.due}개` : '오늘 복습 끝!';
+  const nextNew = V.find(v=>!cardState(v));
+  $('nextSmall').textContent = nextNew ? `Day ${nextNew.d} · ${nextNew.w}부터` : '모든 단어 시작함';
+  const box=$('days'); box.innerHTML='';
+  for(let d=1; d<=30; d++){
+    const p=dayProgress(d); const pct=p.total?Math.round(p.seen/p.total*100):0;
+    const b=document.createElement('button');
+    b.className='day'+(p.total && p.seen===p.total ? ' done':'');
+    b.innerHTML=`<div class="dn">Day</div><div class="dd">${d}</div><div class="bar"><i style="width:${pct}%"></i></div>`;
+    b.onclick=()=>openDayList(d);
+    box.appendChild(b);
+  }
+  const h=new Date().getHours();
+  $('greet').textContent = c.due ? `복습할 단어가 ${c.due}개 기다려요` : (h<12?'좋은 아침! 오늘도 한 Day씩':'오늘도 한 Day씩!');
+}
+
+function show(sec){
+  for(const s of ['home','study','listView','settings']) $(s).classList.toggle('hidden', s!==sec);
+  window.scrollTo(0,0);
+  if(sec==='home') renderHome();
+}
+document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('home'));
+
+/* ---------- 학습 세션 ---------- */
+let Q=[], qi=0, label='', stats={};
+function startSession(list, title){
+  if(!list.length){ toast('학습할 단어가 없어요'); return; }
+  Q=list.slice(); qi=0; label=title; stats={k:0,m:0,u:0,total:list.length};
+  $('doneBox').classList.add('hidden'); $('cardWrap').classList.remove('hidden');
+  show('study'); renderCard();
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function meaningHTML(m){
+  return m.split(' / ').map(part=>{
+    const mm=part.match(/^(n\.|v\.|adj\.|adv\.|prep\.)\s*(.*)$/);
+    return mm ? `<span><span class="pos">${mm[1].replace('.','')}</span>${mm[2]}</span>` : `<span>${part}</span>`;
+  }).join('');
+}
+function hl(sentence, word){
+  const stem = word.split(' ')[0].replace(/e$|y$/,'').slice(0, Math.max(3, word.length-2));
+  const re = new RegExp(`\\b(${stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[a-z]*)`, 'i');
+  return sentence.replace(re,'<b>$1</b>');
+}
+
+function renderCard(){
+  if(qi>=Q.length){ finish(); return; }
+  const v=Q[qi], c=cardState(v);
+  const front=S.opt.dir;
+  $('sMode').textContent = label;
+  $('sCount').textContent = `${qi+1} / ${Q.length}`;
+  $('sProg').style.width = (qi/Q.length*100)+'%';
+  $('cNum').textContent = v.n;
+  const w=$('cWord');
+  if(front==='en'){ w.textContent=v.w; w.className='word'; $('cIpa').textContent=v.p; $('cSpk').classList.remove('hidden'); }
+  else { w.innerHTML=meaningHTML(v.m); w.className='word kor'; $('cIpa').textContent=''; $('cSpk').classList.add('hidden'); }
+  $('cStage').textContent = c ? (c.st>=5?'암기 완료':`복습 ${c.st+1}단계 · 틀린 횟수 ${c.lapse||0}`) : '새 단어';
+  $('cShow').classList.remove('hidden'); $('cAns').classList.add('hidden'); $('cGrade').classList.add('hidden');
+  const ns=(c?c.st:-1)+1; $('nextGap').textContent = ns>=5 ? '암기 완료' : `${INTERVALS[ns]}일 뒤`;
+  prep(v.a); prep(v.a+'_w');
+  if(front==='en' && S.opt.auto==='1') play(v.a+'_w');
+}
+function reveal(){
+  const v=Q[qi];
+  if(S.opt.dir==='ko'){ $('cWord').textContent=v.w; $('cWord').className='word'; $('cIpa').textContent=v.p; $('cSpk').classList.remove('hidden'); play(v.a+'_w'); }
+  $('cMean').innerHTML = S.opt.dir==='en' ? meaningHTML(v.m) : '';
+  $('cEx').innerHTML = v.ex.map(([en,ko])=>`<div class="ex"><p class="en">${hl(en,v.w)}</p><p class="ko">${ko}</p></div>`).join('');
+  $('cShow').classList.add('hidden'); $('cAns').classList.remove('hidden'); $('cGrade').classList.remove('hidden');
+}
+function grade(g){
+  const v=Q[qi], k=id(v); const c=S.cards[k] || {st:-1,due:0,lapse:0};
+  if(g===0){ c.st=0; c.lapse=(c.lapse||0)+1; c.due=today()+DAY; Q.push(v); stats.u++; }
+  else if(g===1){ c.st=Math.max(c.st,0); c.due=today()+DAY; stats.m++; }
+  else { c.st=Math.min(c.st+1,5); c.due = c.st>=5 ? Infinity : today()+INTERVALS[c.st]*DAY; stats.k++; }
+  if(c.due===Infinity) c.due=4102444800000;
+  c.last=Date.now(); S.cards[k]=c; save();
+  qi++; renderCard();
+}
+function finish(){
+  $('cardWrap').classList.add('hidden'); $('doneBox').classList.remove('hidden');
+  $('sProg').style.width='100%';
+  $('doneTitle').textContent = `${label} 끝!`;
+  $('doneText').textContent = `알아요 ${stats.k} · 애매해요 ${stats.m} · 몰라요 ${stats.u}`;
+}
+$('cShow').onclick=reveal;
+$('cSpk').onclick=()=>play(Q[qi].a+'_w');
+$('cFull').onclick=()=>play(Q[qi].a);
+document.querySelectorAll('#cGrade button').forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+
+/* ---------- 홈 버튼 ---------- */
+$('btnReview').onclick=()=>{
+  const due=V.filter(v=>isDue(cardState(v)));
+  startSession(shuffle(due), '오늘의 복습');
+};
+$('btnNext').onclick=()=>{
+  const fresh=V.filter(v=>!cardState(v)).slice(0, +S.opt.nw);
+  startSession(fresh, fresh.length?`새 단어 · Day ${fresh[0].d}`:'');
+};
+
+/* ---------- Day 목록 / 오답 노트 ---------- */
+let listWords=[];
+function stageBadge(v){
+  const c=cardState(v);
+  if(!c) return '';
+  if(c.st>=5) return '<span class="s">완료</span>';
+  return `<span class="s${(c.lapse||0)>0?' miss':''}">${c.st+1}단계</span>`;
+}
+function renderList(words, title, sub){
+  listWords=words; $('lTitle').textContent=title; $('lSub').textContent=sub;
+  $('lBody').innerHTML = words.length ? words.map((v,i)=>`<div class="row" data-i="${i}">
+     <div class="w">${v.w}</div><div class="m">${v.m}</div>${stageBadge(v)}</div>`).join('')
+     : '<div class="row"><div class="m">아직 틀린 단어가 없어요.</div></div>';
+  $('lBody').querySelectorAll('.row[data-i]').forEach(r=>r.onclick=()=>play(listWords[+r.dataset.i].a+'_w'));
+  show('listView');
+}
+function openDayList(d){
+  const ws=dayWords(d), p=dayProgress(d);
+  const fresh=ws.filter(v=>!cardState(v)), due=ws.filter(v=>isDue(cardState(v)));
+  renderList(ws, `Day ${d}`, `${ws.length}개 · 시작 ${p.seen} · 단어를 누르면 발음`);
+  $('dayBtns').classList.remove('hidden'); $('lStudy').classList.add('hidden');
+  const todo = fresh.length ? fresh : due;
+  $('dNewSmall').textContent = fresh.length ? `새 단어 ${fresh.length}개` : (due.length ? `복습할 단어 ${due.length}개` : '오늘은 다 했어요');
+  $('dNew').onclick=()=>{ if(!todo.length){toast('지금 학습할 단어가 없어요. 전체 다시 보기를 눌러 보세요'); return;}
+    startSession(fresh.length?todo.slice():shuffle(todo.slice()), `Day ${d} ${fresh.length?'새 단어':'복습'}`); };
+  $('dAllSmall').textContent = `${ws.length}개 순서대로`;
+  $('dAll').onclick=()=>startSession(ws.slice(), `Day ${d} 전체`);
+}
+$('btnWrong').onclick=()=>{
+  $('dayBtns').classList.add('hidden'); $('lStudy').classList.remove('hidden');
+  const w=V.filter(v=>(cardState(v)||{}).lapse>0).sort((a,b)=>cardState(b).lapse-cardState(a).lapse);
+  renderList(w,'오답 노트','많이 틀린 순서');
+  $('lStudy').onclick=()=>startSession(shuffle(w.slice()),'오답 노트');
+};
+
+/* ---------- 설정 ---------- */
+function bindSeg(elId,key){
+  const el=$(elId);
+  const upd=()=>el.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.v===S.opt[key]));
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.opt[key]=b.dataset.v; save(); upd();});
+  upd();
+}
+$('btnSettings').onclick=()=>{ bindSeg('optDir','dir'); bindSeg('optAuto','auto'); bindSeg('optNew','nw'); show('settings'); };
+$('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`토익단어_백업_${new Date().toISOString().slice(0,10)}.json`; a.click();
+};
+$('btnImport').onclick=()=>$('fileImport').click();
+$('fileImport').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  f.text().then(t=>{ const s=JSON.parse(t); if(s.cards){ S=s; save(); toast('백업을 불러왔어요'); show('home'); } })
+   .catch(()=>toast('백업 파일을 읽지 못했어요'));
+};
+$('btnReData').onclick=()=>{ showOnly('setup'); };
+$('btnReset').onclick=()=>{ if(confirm('학습 기록을 모두 지울까요?')){ S.cards={}; save(); toast('초기화했어요'); show('home'); } };
+
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),1800); }
+
+show('home');
+}
+</script>
+</body>
+</html>
